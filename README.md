@@ -7,8 +7,7 @@ GPS data has been used to increase accuracy of the extended Kalman filter estima
 Run main_INS.m to obtain the results.
 
 References:
-J. A. Farrel, Aided navigation GPS with high rate sensors. New
-York: The McGRaw-Hill Companies, 2008.
 
-P. Kim, Kalman Filter for Beginners: with MATLAB Exam-
-ples. CreateSpace Independent Publishing Platform, 2011.
+J. A. Farrel, Aided navigation GPS with high rate sensors. New York: The McGRaw-Hill Companies, 2008.
+
+P. Kim, Kalman Filter for Beginners: with MATLAB Examples. CreateSpace Independent Publishing Platform, 2011.
