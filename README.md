@@ -1,4 +1,4 @@
-# Attitude and Heading reference system using IMU + GPS data.
+# Attitude and Position reference system using IMU + GPS data.
 
 Extract #4 from the Málaga Stereo and Laser Urban Data Set (http://www.mrpt.org/MalagaUrbanDataset#33_Binary_files) has been used.
 
