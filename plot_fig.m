@@ -2,14 +2,14 @@ a = figure(1);
 plot(t_v(2:n),psiIMU_v(2:n)*r2d,'.b');
 hold on
 % plot(t_v(2:n),psiGyro_v(2:n)*r2d,'.k')
-plot(tGPS_v,psiGPS_v*r2d,'.g','MarkerSize',10)
+%plot(tGPS_v,psiGPS_v*r2d,'.g','MarkerSize',10)
 plot(t_v(2:n),psiHat_v(2:n)*r2d,'.r');
 hold off
 ylim([-360,360])
 ylabel('\psi (^o)')
 xlabel('t (s)')
-% legend('IMU','Rate Gyro','GPS',filter)
-legend('IMU','GPS',filter)
+% legend('IMU',filter)
+legend('IMU', filter)
 set( gca                       , ...
     'FontName'   , 'Helvetica' );
 
@@ -29,14 +29,14 @@ a = figure(2);
 plot(t_v(2:n),thetaIMU_v(2:n)*r2d,'.b');  %'-.g','LineWidth',2.5);
 hold on
 % plot(t_v(2:n),thetaGyro_v(2:n)*r2d,'.k')
-plot(t_v,thetaAccel_v*r2d,'.g')            %'--c','LineWidth',2.5)
+%plot(t_v,thetaAccel_v*r2d,'.g')            %'--c','LineWidth',2.5)
 plot(t_v(2:n),thetaHat_v(2:n)*r2d,'.r');   %'-r','LineWidth',2);
 hold off
 ylim([-360,360])
 ylabel('\theta (^o)')
 xlabel('t (s)')
 % legend('IMU','Rate Gyro','Accelerometer',filter)
-legend('IMU','Accelerometer',filter)
+legend('IMU',filter)
 set( gca                       , ...
     'FontName'   , 'Helvetica' );
 
@@ -56,14 +56,14 @@ a=figure(3);
 plot(t_v(2:n),phiIMU_v(2:n)*r2d,'.b');
 hold on
 % plot(t_v(2:n),phiGyro_v(2:n)*r2d,'.k')
-plot(t_v,phiAccel_v*r2d,'.g')
+%plot(t_v,phiAccel_v*r2d,'.g')
 plot(t_v(2:n),phiHat_v(2:n)*r2d,'.r');
 hold off
 ylim([-360,360])
 ylabel('\theta (^o)')
 xlabel('t (s)')
 % legend('IMU','Rate Gyro','Accelerometer',filter)
-legend('IMU','Accelerometer',filter)
+legend('IMU',filter)
 set( gca                       , ...
     'FontName'   , 'Helvetica' );
 
@@ -77,3 +77,60 @@ set(gca, ...
   'XColor'      , [.3 .3 .3], ...
   'YColor'      , [.3 .3 .3], ...
   'LineWidth'   , 1         );
+
+ figure(4);
+    plot(tGPS_v(2:end),latHat_v(2:end)*r2d,'-b','LineWidth',2);
+    hold on
+    plot(tGPS_v(2:end),p_GPS_v(1,2:end)*r2d,'--r','LineWidth',2); %'-.g','LineWidth',2.5);
+    xlim([0,125])
+    legend(filter ,'GPS')
+    ylabel('Latitude (deg)','FontSize',18)
+    xlabel('t (s)','FontSize',18)
+    set( gca                       , ...
+    'FontName'   , 'Helvetica' ,'FontSize',14);
+    set(gca, ...
+    'Box'         , 'on'     , ...
+    'TickDir'     , 'out'     , ...
+    'TickLength'  , [.02 .02] , ...
+    'XMinorTick'  , 'on'      , ...
+    'YMinorTick'  , 'on'      , ...
+    'YGrid'       , 'off'      , ...
+    'LineWidth'   , 1.5         );
+
+    figure(5);
+    plot(tGPS_v(2:end),lonHat_v(2:end)*r2d,'-b','LineWidth',2) 
+    hold on
+    plot(tGPS_v(2:end),p_GPS_v(2,2:end)*r2d,'--r','LineWidth',2); %'-.g','LineWidth',2.5);         
+    xlim([0,125])
+    legend(filter,'GPS')
+    ylabel('Longitude (deg)','FontSize',18)
+    xlabel('t (s)','FontSize',18)
+    set( gca                       , ...
+    'FontName'   , 'Helvetica' ,'FontSize',14);
+    set(gca, ...
+    'Box'         , 'on'     , ...
+    'TickDir'     , 'out'     , ...
+    'TickLength'  , [.02 .02] , ...
+    'XMinorTick'  , 'on'      , ...
+    'YMinorTick'  , 'on'      , ...
+    'YGrid'       , 'off'      , ...
+    'LineWidth'   , 1.5         );
+
+    figure(6);
+    plot(tGPS_v(2:end),hHat_v(2:end)*r2d,'-b','LineWidth',2)
+    hold on
+    plot(tGPS_v(2:end),p_GPS_v(3,2:end)*r2d,'--r','LineWidth',2); %'-.g','LineWidth',2.5);
+    xlim([0,125])
+    ylabel('Altitude (m)','FontSize',18)
+    xlabel('t (s)','FontSize',18)
+    legend(filter, 'GPS')
+    set( gca                       , ...
+    'FontName'   , 'Helvetica' ,'FontSize',14);
+    set(gca, ...
+    'Box'         , 'on'     , ...
+    'TickDir'     , 'out'     , ...
+    'TickLength'  , [.02 .02] , ...
+    'XMinorTick'  , 'on'      , ...
+    'YMinorTick'  , 'on'      , ...
+    'YGrid'       , 'off'      , ...
+    'LineWidth'   , 1.5        );

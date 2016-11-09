@@ -8,10 +8,10 @@ n = 3100;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Syncronization data parameters
 %  GPS
-deltaGPS = 0;
+deltaGPS = 1;
 stepGPS = 100;
 % IMU
-deltaIMU  = 78;
+deltaIMU  = 79;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% GPS and IMU data
 GPS_data
@@ -54,34 +54,34 @@ tauA(3,1) = 1883.8307;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Variances of the Q matrice
 % AHRS - Attitude and heading reference system
-varQ1(1,1) = 0.0001;
-varQ1(2,1) = 0.0001;
-varQ1(3,1) = 0.01;
-varQ1(4,1) = 0.0001;
-varQ1(5,1) = 0.0001;
-varQ1(6,1) = 0.0001;
+varQ1(1,1) = 2;%0.0001;
+varQ1(2,1) = 2;%0.0001;
+varQ1(3,1) = 2;%0.01;
+varQ1(4,1) = 2;%0.0001;
+varQ1(5,1) = 2;%0.0001;
+varQ1(6,1) = 2;%0.0001;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % INS aided GPS - Inertial Navigation system aided GPS
-varQ2(1,1) = 0.00059539;
-varQ2(2,1) = 0.00062077;
-varQ2(3,1) = 0.001261;
-varQ2(4,1) = 1.5151e-6;
-varQ2(5,1) = 2.181e-6;
-varQ2(6,1) = 6.853e-6;
+varQ2(1,1) = 10^3%0.00059539;
+varQ2(2,1) = 10^3%0.00062077;
+varQ2(3,1) = 200000%0.001261;
+varQ2(4,1) = 0.200000%1.5151e-6;
+varQ2(5,1) = 0.200000%2.181e-6;
+varQ2(6,1) = 0.200000%6.853e-6;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Variances of the R matrice
 % AHRS - Attitude and heading reference system
-varR1(1,1) = 6;
-varR1(2,1) = 6;
-varR1(3,1) = 6;
+varR1(1,1) = 5;
+varR1(2,1) = 5;
+varR1(3,1) = 5;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % INS aided GPS - Inertial navigation system aided GPS
-varR2(1,1) = 2.591128492879236e-008^2;
-varR2(2,1) = 2.591128492879236e-008^2;
-varR2(3,1) = 0.00033^2;
-varR2(4,1) = 0.5144^2;
-varR2(5,1) = 0.5144^2;
-varR2(6,1) = 0.5144^2;
+varR2(1,1) = 0.1%2.591128492879236e008^2;
+varR2(2,1) = 0.1%2.591128492879236e008^2;
+varR2(3,1) = 0.000000001%0.00033^2;
+%varR2(4,1) = 0.1%0.5144^2;
+%varR2(5,1) = 0.1%0.5144^2;
+%varR2(6,1) = 0.1%0.5144^2;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 P1 = eye(6);
 P2 = eye(9)*1e-10;
@@ -154,10 +154,10 @@ for k=1:n
         tGPS = t;
         tGPS_v(GPScont) =  t;
         % Reading GPS data
-        psiGPS              = normalize_angle_f(heading_v(GPScont + deltaGPS),-pi);    % Yaw GPS
-        deltapsi = psiGPS - eangles.psi;
+        %psiGPS              = normalize_angle_f(heading_v(GPScont + deltaGPS),-pi);    % Yaw GPS
+        %deltapsi = 0%psiGPS - eangles.psi;
         
-        psiGPS_v(GPScont)   = psiGPS;                                                  % Yaw GPS vector
+        %psiGPS_v(GPScont)   = psiGPS;                                                  % Yaw GPS vector
         latGPS              = lat_v(GPScont + deltaGPS);
         latGPS_v(GPScont)   = latGPS; 
         lonGPS              = lon_v(GPScont + deltaGPS);
@@ -230,7 +230,7 @@ for k=1:n
             [x1p, P1p] = ekf_p (x1,P1,sys_a);
         end
         
-        z1 = [eangles.phi; eangles.theta; eangles.psi + deltapsi];
+        z1 = [eangles.phi; eangles.theta; eangles.psi];
         
         if opt == 0
             delta_z1 = normalize_angle_f(z1-sys_a.H*x1p,-pi);
@@ -247,24 +247,26 @@ for k=1:n
         qhat = euler2quat_f(eangleshat); 
         qhat = qhat/norm(qhat);       
         % INS aided GPS - Inertial Navigation system aided GPS
-        if GPSstate == 1
-            [pINS,vINS] = GPS_IMU(x2(1:3), x2(4:6), qhat, a-ba, g, TIMU);
+        %if GPSstate == 0
+        %    [pINS,vINS] = INS(x2(1:3), x2(4:6), qhat, a-ba, g, TIMU);
 %           [p_INS,v_INS] = INS(x2(1:3,1),v, x1(1:4), a_a-ba, g,T);
 %           [p_IG,v_IG] = GPS_IMU(p_IG,v_IG, x1(1:4), a-ba, g, T);
-            x2(1:3) = pINS;
-            x2(4:6) = vINS;
-        end
-        if GPSstate == 0;
+        %    x2(1:3) = pINS;
+        %    x2(4:6) = vINS;
+        %end
+        if GPSstate == 1
             %%%%%%%%%%%%%%%%%%%%%% Position Reference System %%%%%%%%%%%%%%%%%%%
-            sysP = syspos_m(p, v, qhat, varQ2, varR2, tauA, TIMU);
+            [pHat,vHat] = INS(x2(1:3),x2(4:6), qhat, a-ba, g,TIMU);
+            sysP = syspos4_m(pHat, vHat, qhat, varQ2, varR2, tauA, TIMU);
             if opt == 0
                 [xp2, Pp2] = ekf_p (x2,P2,sysP);          % Prediction
             end
 %            hhat2 = xp2(1:6);
-            [pHat,vHat] = INS(x2(1:3),x2(4:6), qhat, a_a-ba, g,TIMU);
-            hhat2 = [pHat;vHat];
+            %hhat2 = [pHat;vHat];
             
-            z2(1:6,1)  = [p; v];               % Position observation
+            %z2(1:6,1)  = [p; v];               % Position observation
+            hhat2 = [pHat];
+            z2 = [p];
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % Position reference system observation error
             deltaz2    = z2 - hhat2;
@@ -278,17 +280,17 @@ for k=1:n
                 [x2,P2] = ekf_u(xp2, Pp2, deltaz2, sysP,1);   % Filtering 
             end
         end
-        p_IG_v(:,k) = pIG;
-        v_IG_v(:,k) = vIG;
+        p_IG_v(:,GPScont) = pIG;
+        v_IG_v(:,GPScont) = vIG;
         % Accelerometer bias estimated
         ba = x2(7:9);
-        ba_v(:,k) = ba;
-        latHat_v(k) = x2(1);
-        lonHat_v(k) = x2(2);
-        hHat_v(k)   = x2(3);
-        vnHat_v(k) = x2(4);
-        veHat_v(k) = x2(5);
-        vdHat_v(k) = x2(6);
+        ba_v(:,GPScont) = ba;
+        latHat_v(GPScont) = x2(1);
+        lonHat_v(GPScont) = x2(2);
+        hHat_v(GPScont)   = x2(3);
+        vnHat_v(GPScont) = x2(4);
+        veHat_v(GPScont) = x2(5);
+        vdHat_v(GPScont) = x2(6);
         % Rate gyros bias estimated
         bg_v(:,k) = bg;
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
